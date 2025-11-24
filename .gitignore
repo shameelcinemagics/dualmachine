@@ -1,0 +1,11 @@
+# Root-level ignores
+
+# Ignore node_modules anywhere
+**/node_modules/
+
+# Ignore environment files anywhere
+**/.env
+
+# Ignore local DB files (backend)
+backend/prisma/dev.db
+backend/planogram.db

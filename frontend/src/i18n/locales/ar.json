@@ -1,0 +1,45 @@
+{
+  "search": "البحث عن المنتجات...",
+  "all_categories": "جميع الفئات",
+  "cart": "السلة",
+  "admin": "المدير",
+  "categories": {
+    "beverages": "المشروبات",
+    "snacks": "الوجبات الخفيفة",
+    "candy": "الحلوى",
+    "energy": "مشروبات الطاقة",
+    "healthy": "صحي"
+  },
+  "labels": {
+    "best_seller": "الأكثر مبيعاً",
+    "selling_fast": "نفذ بسرعة",
+    "high_protein": "عالي البروتين",
+    "out_of_stock": "غير متوفر"
+  },
+  "buttons": {
+    "add_to_cart": "أضف للسلة",
+    "view_details": "عرض التفاصيل",
+    "checkout": "الدفع",
+    "continue_shopping": "متابعة التسوق",
+    "remove": "إزالة"
+  },
+  "product_details": {
+    "nutrition_facts": "الحقائق الغذائية",
+    "ingredients": "المكونات",
+    "calories": "السعرات الحرارية",
+    "health_rating": "التقييم الصحي"
+  },
+  "cart": {
+    "empty": "سلتك فارغة",
+    "total": "المجموع",
+    "quantity": "الكمية"
+  },
+  "language": "اللغة",
+  "english": "English",
+  "arabic": "العربية",
+  "qr_promo": {
+    "mobile_app": "تطبيق الجوال",
+    "scan_download": "امسح للتحميل",
+    "loyalty_points": "اكسب نقاط الولاء"
+  }
+}

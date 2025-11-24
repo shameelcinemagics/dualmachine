@@ -1,0 +1,45 @@
+{
+  "search": "Search products...",
+  "all_categories": "All Categories",
+  "cart": "Cart",
+  "admin": "Admin",
+  "categories": {
+    "beverages": "Beverages",
+    "snacks": "Snacks",
+    "candy": "Candy",
+    "energy": "Energy",
+    "healthy": "Healthy"
+  },
+  "labels": {
+    "best_seller": "Best Seller",
+    "selling_fast": "Selling Fast",
+    "high_protein": "High Protein",
+    "out_of_stock": "Out of Stock"
+  },
+  "buttons": {
+    "add_to_cart": "Add to Cart",
+    "view_details": "View Details",
+    "checkout": "Checkout",
+    "continue_shopping": "Continue Shopping",
+    "remove": "Remove"
+  },
+  "product_details": {
+    "nutrition_facts": "Nutrition Facts",
+    "ingredients": "Ingredients",
+    "calories": "Calories",
+    "health_rating": "Health Rating"
+  },
+  "cart": {
+    "empty": "Your cart is empty",
+    "total": "Total",
+    "quantity": "Quantity"
+  },
+  "language": "Language",
+  "english": "English",
+  "arabic": "العربية",
+  "qr_promo": {
+    "mobile_app": "Mobile App",
+    "scan_download": "Scan to Download",
+    "loyalty_points": "Earn Loyalty Points"
+  }
+}
