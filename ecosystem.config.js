@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "backend",
-      cwd: "D:/vendIT-FulllApp/backend",
+      cwd: "D:/dualmachine/backend",
       script: "server.js",
       autorestart: true,
       watch: false,
@@ -12,7 +12,7 @@ module.exports = {
     },
     {
       name: "frontend",
-      cwd: "D:/vendIT-FulllApp/frontend",
+      cwd: "D:/dualmachine/frontend",
       script: "./node_modules/serve/build/main.js",
       args: "-s dist -l 8080",
       autorestart: true,
@@ -23,17 +23,18 @@ module.exports = {
     },
     {
       name: "signage",
-      cwd: "D:/vendIT-FulllApp/signage", // or wherever your watcher.js is
+      cwd: "D:/dualmachine/signage", // or wherever your watcher.js is
       script: "watcher.js",
       autorestart: true,
       watch: false,
     },
     {
       name: "chrome",
-      cwd:"D:/vendIT-FulllApp",
+      cwd:"D:/dualmachine",
       script:"chrome.js",
       interpreter:"node",
-      autorestart:false
+      autorestart:true,
+      watch:false
     },
   ],
 };
