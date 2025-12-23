@@ -401,7 +401,8 @@ const Index = () => {
               <SecretTapArea className="absolute inset-0" />
               {currentTemp && (
                 <div className="p-4 bg-muted/20 rounded text-sm">
-                  <p><strong>{currentTemp.temperature1}°C</strong></p>
+                  <p><strong>{currentTemp[0].temperature1}°C</strong></p>
+                  <p><strong>{currentTemp[1].temperature1}°C</strong></p>
                 </div>
               )}
             </span>
