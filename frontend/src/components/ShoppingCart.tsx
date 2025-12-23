@@ -1,16 +1,14 @@
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingCart as CartIcon, Plus, Minus, Trash2 } from "lucide-react";
 import axios from 'axios';
-import { json } from "stream/consumers";
-
+import { useToast } from "@/hooks/use-toast";
 
 interface Product {
-  slot:number;
+  slot: number;
   id: string;
   name: string;
   price: number;
@@ -29,8 +27,10 @@ interface ShoppingCartProps {
   items: CartItem[];
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onRemoveItem: (productId: string) => void;
-  onStartCheckout: () => void;
+  onStartCheckout: (trackId: string) => void;
   onPaymentComplete: (products: CartItem[]) => void;
+  onPaymentProcessing: (isProcessing: boolean) => void;
+  onPaymentFailed: () => void;
 }
 
 
@@ -42,9 +42,12 @@ export const ShoppingCart = ({
   onRemoveItem,
   onStartCheckout,
   onPaymentComplete,
+  onPaymentProcessing,
+  onPaymentFailed,
 }: ShoppingCartProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isCheckoutInProgress, setIsCheckoutInProgress] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (items.length > 0) {
@@ -53,29 +56,22 @@ export const ShoppingCart = ({
       setIsExpanded(false);
       setIsCheckoutInProgress(false);
     }
-
-    if (items.length > 0 && !isCheckoutInProgress) {
-      const timer = setTimeout(() => {
-        console.log("Cart cleared automatically after 15 seconds of inactivity");
-        items.forEach((item) => onRemoveItem(item.id)); // clear all items
-      }, 15000);
-
-      // Cleanup: if items change before 15s, reset timer
-      return () => clearTimeout(timer);
-    }
-  }, [items, isCheckoutInProgress, onRemoveItem]);
+  }, [items]);
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleCheckout = async () => {
     setIsCheckoutInProgress(true);
-    onStartCheckout();
+    const trackId = 'TRK-' + Date.now();
+    onStartCheckout(trackId);
+    onPaymentProcessing(true);
 
     try {
       const payload = {
         amount: totalPrice,
         slot: 1, // or dynamically pass the selected slot
+        trackId: trackId, // ✅ Pass trackId to backend
         products: items.map(({ slot, name, price, quantity, image }) => ({
           slot,
           name,
@@ -85,15 +81,66 @@ export const ShoppingCart = ({
         })),
       };
 
+      console.log('🛒 Initiating payment:', { trackId, amount: totalPrice });
+
       const result = await axios.post('http://localhost:5000/api/payment', payload);
-      console.log(result)
+      console.log('💳 Payment response:', result.data);
+
       const data = result.data;
-      if(data.message === "Payment successful"){
-        console.log("Payment Success")
-        onPaymentComplete(data.products)
+
+      if (data.message === "Payment successful") {
+        console.log("✅ Payment Success");
+        toast({
+          title: "Payment Successful",
+          description: "Dispensing your items...",
+          variant: "default", // or "success" if configured
+          duration: 3000,
+        });
+        onPaymentComplete(data.products);
+      } else if (data.cancelled) {
+        console.log("🚫 Payment Cancelled");
+        toast({
+          title: "Payment Cancelled",
+          description: "Transaction was cancelled.",
+        });
+        onPaymentFailed();
+      } else if (data.declined) {
+        console.log("❌ Payment Declined:", data.message);
+        toast({
+          title: "Payment Declined",
+          description: data.message || "Your card was declined.",
+          variant: "destructive",
+        });
+        onPaymentFailed();
       }
-    } catch (err) {
-      console.error("Payment error:", err);
+    } catch (err: any) {
+      console.error("❌ Payment error:", err);
+
+      let errorMessage = "An unexpected error occurred.";
+      if (err.response?.data?.declined) {
+        errorMessage = err.response.data.message || "Payment Declined";
+        toast({
+          title: "Payment Declined",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      } else if (err.response?.data?.cancelled) {
+        toast({
+          title: "Payment Cancelled",
+          description: "Transaction was cancelled.",
+        });
+      } else {
+        errorMessage = err.response?.data?.message || err.message;
+        toast({
+          title: "Payment Failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+      onPaymentFailed();
+    } finally {
+      setIsCheckoutInProgress(false);
+      onPaymentProcessing(false);
     }
   };
 
@@ -182,7 +229,7 @@ export const ShoppingCart = ({
               </div>
             ))}
           </div>
-          
+
           <div className="p-4 border-t border-border/50 space-y-3">
             <div className="flex justify-between items-center">
               <span className="font-semibold">Total</span>

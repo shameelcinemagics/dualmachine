@@ -1,6 +1,4 @@
-import{ useRef } from 'react';
-import { useState } from "react";
-import { useEffect } from "react";
+import { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 
 type MediaItem = {
@@ -11,39 +9,48 @@ type MediaItem = {
 };
 
 const IMAGE_DURATION = 10000; // milliseconds
+const POLL_INTERVAL = 600000; // 10 minutes
 
 const Signage: React.FC = () => {
   const [mediaList, setMediaList] = useState<MediaItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const videoRef = useRef<HTMLVideoElement>(null);
+
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Fetch assigned media list from local API or DB
-  useEffect(() => {
-    const fetchMedia = async () => {
-      try {
-        // Replace this with your actual API or local endpoint
-        const res = await axios.get<MediaItem[]>('http://localhost:5000/api/media');
-        setMediaList(res.data);
-      } catch (err) {
-        console.error('Failed to fetch media:', err);
-      }
-    };
+  // 🔁 Fetch media function
+  const fetchMedia = async () => {
+    try {
+      const res = await axios.get<MediaItem[]>('http://localhost:5000/api/media');
 
-    fetchMedia();
+      setMediaList((prev) => {
+        // 🔍 Prevent unnecessary resets
+        if (JSON.stringify(prev) !== JSON.stringify(res.data)) {
+          return res.data;
+        }
+        return prev;
+      });
+    } catch (err) {
+      console.error('Failed to fetch media:', err);
+    }
+  };
+
+  // ✅ Initial fetch + polling every 15s
+  useEffect(() => {
+    fetchMedia(); // initial load
+
+    const interval = setInterval(fetchMedia, POLL_INTERVAL);
+
+    return () => clearInterval(interval);
   }, []);
 
-  // Handle image timer and video ended
+  // ⏱ Handle image timer
   useEffect(() => {
     if (mediaList.length === 0) return;
 
     const currentMedia = mediaList[currentIndex];
 
     if (currentMedia.type === 'image') {
-      // Set timeout to go to next image
-      timeoutRef.current = setTimeout(() => {
-        goToNext();
-      }, IMAGE_DURATION);
+      timeoutRef.current = setTimeout(goToNext, IMAGE_DURATION);
     }
 
     return () => {
@@ -57,7 +64,6 @@ const Signage: React.FC = () => {
 
   const currentMedia = mediaList[currentIndex];
 
-  
   return (
     <div
       style={{
@@ -75,28 +81,23 @@ const Signage: React.FC = () => {
       {currentMedia ? (
         currentMedia.type === 'video' ? (
           <video
+            key={currentMedia.media_id} // 🔑 ensures reload if video changes
             src={currentMedia.url}
             autoPlay
             muted
             playsInline
-            disablePictureInPicture
             controls={false}
+            disablePictureInPicture
             controlsList="nodownload nofullscreen noremoteplayback"
             onEnded={goToNext}
             onContextMenu={(e) => e.preventDefault()}
-            style={{
-              maxWidth: '100%',
-              maxHeight: '100%',
-            }}
+            style={{ maxWidth: '100%', maxHeight: '100%' }}
           />
         ) : (
           <img
             src={currentMedia.url}
             alt={currentMedia.title}
-            style={{
-              maxWidth: '100%',
-              maxHeight: '100%',
-            }}
+            style={{ maxWidth: '100%', maxHeight: '100%' }}
           />
         )
       ) : (

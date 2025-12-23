@@ -42,13 +42,13 @@ export const DispenseAnimation = ({ isVisible, items, onComplete }: DispenseAnim
 
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
     console.log("Total items to dispense:", totalItems, "Current index:", currentItemIndex);
-    
+
     if (currentItemIndex < totalItems) {
       console.log("Setting timer for next item");
       const timer = setTimeout(() => {
         console.log("Timer fired, incrementing from", currentItemIndex, "to", currentItemIndex + 1);
         setCurrentItemIndex(prev => prev + 1);
-      }, 1000);
+      }, 2000);
       return () => clearTimeout(timer);
     } else if (currentItemIndex >= totalItems && !showSuccess && !showFeedback) {
       console.log("All items dispensed, showing success");
@@ -71,7 +71,7 @@ export const DispenseAnimation = ({ isVisible, items, onComplete }: DispenseAnim
     if (!showFeedback || selectedRating) return;
 
     console.log("Starting 10-second timeout for feedback screen");
-    
+
     // Countdown timer
     const countdownInterval = setInterval(() => {
       setTimeoutSeconds(prev => {
@@ -94,7 +94,7 @@ export const DispenseAnimation = ({ isVisible, items, onComplete }: DispenseAnim
   }, [showFeedback, selectedRating, onComplete]);
 
   // Create an array of individual items for animation
-  const individualItems = items.flatMap(item => 
+  const individualItems = items.flatMap(item =>
     Array(item.quantity).fill(item)
   );
 
@@ -140,12 +140,12 @@ export const DispenseAnimation = ({ isVisible, items, onComplete }: DispenseAnim
               <motion.div
                 key={i}
                 className="absolute w-2 h-2 bg-primary/20 rounded-full"
-                initial={{ 
+                initial={{
                   x: Math.random() * window.innerWidth,
                   y: -20,
-                  opacity: 0 
+                  opacity: 0
                 }}
-                animate={{ 
+                animate={{
                   y: window.innerHeight + 20,
                   opacity: [0, 1, 0],
                   rotate: 360
@@ -208,11 +208,10 @@ export const DispenseAnimation = ({ isVisible, items, onComplete }: DispenseAnim
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleRatingClick(index + 1)}
-                      className={`p-4 rounded-full text-6xl transition-all duration-200 ${
-                        selectedRating === index + 1 
-                          ? 'bg-primary/20 ring-4 ring-primary' 
-                          : 'bg-muted/30 hover:bg-muted/50'
-                      }`}
+                      className={`p-4 rounded-full text-6xl transition-all duration-200 ${selectedRating === index + 1
+                        ? 'bg-primary/20 ring-4 ring-primary'
+                        : 'bg-muted/30 hover:bg-muted/50'
+                        }`}
                     >
                       {emoji}
                     </motion.button>
@@ -269,17 +268,17 @@ export const DispenseAnimation = ({ isVisible, items, onComplete }: DispenseAnim
                     <Instagram className="w-6 h-6 text-pink-500" />
                     <h3 className="text-xl font-semibold">Follow us on Instagram!</h3>
                   </div>
-                  
+
                   <p className="text-muted-foreground mb-4">
                     Get exclusive deals and healthy tips
                   </p>
-                  
-                  <img 
-                    src={instagramQR} 
-                    alt="Instagram QR Code" 
+
+                  <img
+                    src={instagramQR}
+                    alt="Instagram QR Code"
                     className="w-24 h-24 mx-auto rounded border border-border/30"
                   />
-                  
+
                   <p className="text-xs text-muted-foreground mt-2">
                     Scan to follow @vendit
                   </p>
@@ -339,13 +338,13 @@ export const DispenseAnimation = ({ isVisible, items, onComplete }: DispenseAnim
                     <motion.div
                       key={currentItemIndex}
                       initial={{ y: -100, opacity: 0, scale: 0.5 }}
-                      animate={{ 
-                        y: 0, 
-                        opacity: 1, 
+                      animate={{
+                        y: 0,
+                        opacity: 1,
                         scale: 1
                       }}
                       exit={{ y: 100, opacity: 0, scale: 0.5 }}
-                      transition={{ 
+                      transition={{
                         type: "spring",
                         stiffness: 300,
                         damping: 20
@@ -357,7 +356,7 @@ export const DispenseAnimation = ({ isVisible, items, onComplete }: DispenseAnim
                           src={currentItem.image}
                           alt={currentItem.name}
                           className="w-32 h-32 object-cover rounded-xl shadow-xl mx-auto"
-                          animate={{ 
+                          animate={{
                             boxShadow: [
                               "0 10px 30px rgba(0,0,0,0.2)",
                               "0 20px 40px rgba(0,0,0,0.3)",
@@ -365,23 +364,23 @@ export const DispenseAnimation = ({ isVisible, items, onComplete }: DispenseAnim
                             ],
                             rotate: [0, 5, -5, 0]
                           }}
-                          transition={{ 
+                          transition={{
                             boxShadow: { duration: 1, repeat: Infinity },
                             rotate: { duration: 2, repeat: Infinity, type: "tween" }
                           }}
                         />
-                        
+
                         {/* Falling Effect */}
                         <motion.div
                           className="absolute inset-0 bg-primary/10 rounded-xl"
-                          animate={{ 
+                          animate={{
                             opacity: [0, 0.5, 0],
                             scale: [1, 1.1, 1]
                           }}
                           transition={{ duration: 1, repeat: Infinity }}
                         />
                       </div>
-                      
+
                       <motion.h3
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -421,7 +420,7 @@ export const DispenseAnimation = ({ isVisible, items, onComplete }: DispenseAnim
                 >
                   <CheckCircle className="w-32 h-32 text-success mx-auto" />
                 </motion.div>
-                
+
                 <motion.h1
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -430,7 +429,7 @@ export const DispenseAnimation = ({ isVisible, items, onComplete }: DispenseAnim
                 >
                   Enjoy Your Items!
                 </motion.h1>
-                
+
                 <motion.p
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -445,12 +444,12 @@ export const DispenseAnimation = ({ isVisible, items, onComplete }: DispenseAnim
                   <motion.div
                     key={i}
                     className="absolute w-3 h-3 bg-success rounded"
-                    initial={{ 
+                    initial={{
                       x: window.innerWidth / 2,
                       y: window.innerHeight / 2,
                       opacity: 1
                     }}
-                    animate={{ 
+                    animate={{
                       x: window.innerWidth / 2 + (Math.random() - 0.5) * 400,
                       y: window.innerHeight / 2 + (Math.random() - 0.5) * 400,
                       opacity: 0,
