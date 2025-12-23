@@ -113,35 +113,20 @@ function saveSales(products = []){
   })
 }
 
-// Function to clear existing planogram data for a specific machineId
-function clearPlanogramForMachine(machineId) {
-  const deleteStmt = db.prepare(`DELETE FROM planogram WHERE vending_machine_id = ?`);
-  deleteStmt.run(machineId);
-}
-
-// Modified savePlanogram function to handle clearing data on machineId change
-function savePlanogram(slots = [], newMachineId) {
+function savePlanogram(slots = []) {
   const tx = db.transaction((slots) => {
-    // Step 1: Check if the machineId has changed. If it has, clear all existing data for that machineId
-    const currentMachineId = slots[0]?.vending_machine_id;
-    if (currentMachineId !== newMachineId) {
-      console.log(`Machine ID has changed. Clearing old planogram data for machine ID: ${currentMachineId}`);
-      clearPlanogramForMachine(currentMachineId);  // Clear data for the previous machineId
-    }
-
-    // Step 2: Insert new planogram data
     for (const slot of slots) {
       const exists = check.get(slot.id);
 
       const params = {
         id: slot.id,
-        vending_machine_id: newMachineId,  // Ensure new machineId is used
+        vending_machine_id: slot.vending_machine_id,
         slot_number: slot.slot_number,
         product_id: slot.product_id,
         quantity: slot.quantity,
         max_capacity: slot.max_capacity,
         product_name: slot.product?.name,
-        product_price: slot.custom_price,
+        product_price: slot.product?.price,
         image_url: slot.product?.image_url,
         category: slot.product?.category,
         calories: slot.product?.calories,
@@ -163,6 +148,7 @@ function savePlanogram(slots = [], newMachineId) {
 
   tx(slots);
 }
+
 function getPlanogram() {
   return db.prepare(`
     SELECT
